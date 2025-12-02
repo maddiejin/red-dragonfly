@@ -1,65 +1,126 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState } from "react";
+import { Container, Card, CardContent, Typography, Textarea, Button, Stack, CssBaseline, FormControl} from "@mui/joy";
+import styled from "@emotion/styled";
+import { keyframes } from "@emotion/react";
+import { Playball, Roboto, Gelasio } from 'next/font/google';
+
+// --- Font ---
+const CURSIVE_FONT = Playball({ weight: '400', subsets: ['latin'] });
+const SANS_SERIF_FONT = Roboto({ weight: '400', subsets: ['latin'] });
+const SERIF_FONT = Gelasio({ weight: '400', subsets: ['latin'] });
+
+// --- Colors ---
+const PRIMARY_COLOR = "#2d622fff";
+const BACKGROUND_COLOR = "#F2F0EB";
+const CARD_BG_COLOR = "#ffffff";
+
+// --- Animations ---
+const floatUp = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+// --- Styled Components ---
+const PageTitle = styled(Typography)`
+  font-family: ${SANS_SERIF_FONT.style.fontFamily};
+  font-size: 3rem;
+  color: ${PRIMARY_COLOR};
+  text-align: center;
+  margin: 2rem 0;
+  opacity: 0;
+  animation: ${floatUp} 0.6s ease-out forwards;
+`;
+
+const PostCard = styled(Card)`
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  background-color: ${CARD_BG_COLOR};
+  opacity: 0;
+  animation: ${floatUp} 0.6s ease-out forwards;
+`;
+
+const FormContainer = styled.div`
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const SubmitButton = styled(Button)`
+  background-color: ${PRIMARY_COLOR} !important;
+  color: #fff !important;
+  &:hover {
+    background-color: #234f2f !important;
+  }
+`;
+
+// --- Dummy Data ---
+const DUMMY_PROMPT = "What's a favorite memory from your childhood?";
+const DUMMY_POSTS = [
+  { id: 1, user: "Grandma", content: "I remember baking mooncakes with my mom...", locked: false },
+  { id: 2, user: "Cousin Li", content: "Singing Puff the Magic Dragon in the backyard...", locked: true },
+];
 
 export default function Home() {
+  const [posts, setPosts] = useState(DUMMY_POSTS);
+  const [userHasPosted, setUserHasPosted] = useState(false);
+  const [newPost, setNewPost] = useState("");
+
+  const handleSubmit = () => {
+    if (!newPost) return;
+    const post = {
+      id: posts.length + 1,
+      user: "You",
+      content: newPost,
+      locked: false,
+    };
+    setPosts([...posts, post]);
+    setNewPost("");
+    setUserHasPosted(true);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <CssBaseline />
+      <Container maxWidth="md" sx={{ padding: "2rem 0" }}>
+        <PageTitle level="h2">{DUMMY_PROMPT}</PageTitle>
+
+        {!userHasPosted && (
+          <FormContainer>
+            <FormControl>
+              <Textarea
+                placeholder="Write your post here..."
+                minRows={3}
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
+                sx={{ marginBottom: "1rem" }}
+              />
+              <SubmitButton onClick={handleSubmit}>Submit Post</SubmitButton>
+            </FormControl>
+          </FormContainer>
+        )}
+
+        <Stack spacing={2}>
+          {posts.map((post) => (
+            <PostCard key={post.id}>
+              <CardContent>
+                <Typography level="h2" color="neutral">
+                  {post.user}
+                </Typography>
+                {post.locked && !userHasPosted ? (
+                  <Typography level="h2" sx={{ color: "#666", fontSize: "0.9rem" }}>
+                    Locked until you post
+                  </Typography>
+                ) : (
+                  <Typography level="h4">{post.content}</Typography>
+                )}
+              </CardContent>
+            </PostCard>
+          ))}
+        </Stack>
+      </Container>
+    </>
   );
 }
