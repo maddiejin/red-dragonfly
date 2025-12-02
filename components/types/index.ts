@@ -8,7 +8,7 @@ export interface User {
 export interface Prompt {
     id: string;
     text: string;
-    tag: string;
+    tag: 'Family Memories' | 'Life Updates' | 'Heritage/History' | 'Advice/Guidance' | 'Storytelling';
 }
 
 export interface Post {

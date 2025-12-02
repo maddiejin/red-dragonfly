@@ -25,19 +25,19 @@ export const mockPrompts: Prompt[] = [
     {
         id: 'prompt-101',
         text: 'Share a childhood memory that shaped who you are today.',
-        tag: 'Nostalgia',
+        tag: 'Family Memories',
     },
     {
         id: 'prompt-102',
         text: 'Share a time when you overcame a significant challenge.',
-        tag: 'Heritage',
+        tag: 'Life Updates',
     },
 ];
 
 export const currentPrompt: Prompt = {
     id: 'prompt-103',
     text: 'Describe a place that holds special meaning to you and why.',
-    tag: 'Travel',
+    tag: 'Heritage/History',
 };
 
 export const currentWeekPosts: Post[] = [
