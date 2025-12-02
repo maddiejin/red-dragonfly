@@ -22,6 +22,11 @@ export default function LanguageToggle({ language, onLanguageChange }: LanugageT
                 color={language === 'en' ? 'primary' : 'neutral'}
                 size="sm"
                 onClick={() => onLanguageChange('en')}
+                sx = { language === 'en' ? { 
+                    bgcolor: '#741111',
+                    color: 'white',
+                    '&:hover': { bgcolor: '#741111' } 
+                } : {} }
             >
                 EN
             </Button>
@@ -30,6 +35,11 @@ export default function LanguageToggle({ language, onLanguageChange }: LanugageT
                 color={language === 'zh' ? 'primary' : 'neutral'}
                 size="sm"
                 onClick={() => onLanguageChange('zh')}
+                sx = { language === 'zh' ? { 
+                    bgcolor: '#741111',
+                    color: 'white',
+                    '&:hover': { bgcolor: '#741111' } 
+                } : {} }
             >
                 中文
             </Button>

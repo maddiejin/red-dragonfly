@@ -1,4 +1,7 @@
 import { Box } from "@mui/joy";
+import Image from "next/image";
+import { Typography } from "@mui/material";
+
 
 export default function Logo() {
     return (
@@ -19,20 +22,24 @@ export default function Logo() {
                     alignItems: 'center', 
                     justifyContent: 'center',
                     fontSize: '1.5rem',
-                }} >  🏠 
+                }} >  
+                <Image
+                    src="/static/hqt.jpg"
+                    alt="Logo"
+                    width={40}
+                    height={40}
+                    style={{
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                    }}
+                />
             </Box>
 
-            <h1 
-                className="title-font"
-                style={{
-                    color: '#2d622f',
-                    fontSize: '1.5rem',
-                    margin: 0,
-                    fontFamily: 'Playball, cursive',
-                }}
+            <Typography
+                variant="h1" className="title-font"
             >
                 Red Dragonfly
-            </h1>
+            </Typography>
 
         </Box>
     )
