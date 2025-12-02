@@ -16,8 +16,8 @@ export interface Post {
     id: string;
     userId: string;
     promptId: string;
-    createdAt: Date;
-    updatedAt?: Date;
+    createdAt: string;
+    updatedAt?: string;
     //content
     title: string;
     content: string;
@@ -33,6 +33,6 @@ export interface Comment {
     postId: string;
     userId: string;
     content: string;
-    createdAt: Date;
-    updatedAt?: Date;
+    createdAt: string;
+    updatedAt?: string;
 }

@@ -29,9 +29,9 @@ export default function PromptCard({ prompt }: PromptCardProps) {
         <Card
             variant="outlined"
             sx={{
-                bgcolor: '#f5f5f5',
+                bgcolor: '#fff',
                 border: '3px solid',
-                borderColor: '#2d622f',
+                borderColor: '#741111',
                 borderRadius: 15,
                 p: 4,
             }}
@@ -51,7 +51,7 @@ export default function PromptCard({ prompt }: PromptCardProps) {
                 <h2
                     style={{
                         fontFamily: 'Georgia, serif',
-                        fontSize: '1.25rem',
+                        fontSize: '1.5rem',
                         color: '#333',
                         margin: 0,
                     }}

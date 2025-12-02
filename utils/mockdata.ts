@@ -47,7 +47,8 @@ export const currentWeekPosts: Post[] = [
         promptId: 'prompt-101',
         title: 'A Childhood Memory',
         content: 'One of my fondest childhood memories is...',
-        createdAt: new Date('2024-06-10T10:00:00Z'),
+        createdAt: new Date('2024-06-10T10:00:00Z').toISOString(),
+        location: 'Home'
     },
     {
         id: 'post-202',
@@ -55,7 +56,7 @@ export const currentWeekPosts: Post[] = [
         promptId: 'prompt-102',
         title: 'Overcoming Challenges',
         content: 'I once faced a huge challenge when...',
-        createdAt: new Date('2024-06-11T12:30:00Z'),
+        createdAt: new Date('2024-06-11T12:30:00Z').toISOString(),
     },
 ];
 
@@ -65,13 +66,20 @@ export const mockComments: Comment[] = [
         postId: 'post-201',
         userId: 'user-2',
         content: 'Thank you for sharing your memory, Alice!',
-        createdAt: new Date('2024-06-10T11:00:00Z'),
+        createdAt: new Date('2024-06-10T11:00:00Z').toISOString(),
     },
     {
         id: 'comment-302',
         postId: 'post-202',
         userId: 'user-1',
         content: 'Inspiring story, Bob!',
-        createdAt: new Date('2024-06-11T13:00:00Z'),
+        createdAt: new Date('2024-06-11T13:00:00Z').toISOString(),
     },
+    {
+        id: 'comment-303',
+        postId: 'post-201',
+        userId: 'user-1',
+        content: 'Love it love it love it!',
+        createdAt: new Date('2024-01-10T11:00:00Z').toISOString(),
+    }
 ];
