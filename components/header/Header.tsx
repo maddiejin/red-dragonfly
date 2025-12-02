@@ -1,5 +1,5 @@
 import { Sheet, Box } from '@mui/joy';
-import Logo from './logo';
+import Logo from './Logo';
 import LanguageToggle from './LanguageToggle';
 import UserMenu from './UserMenu';
 
