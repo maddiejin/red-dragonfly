@@ -1,51 +1,69 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/header/Header';
 import PromptCard from '@/components/prompt-card/PromptCard';
-import { mockUsers, currentUser, mockPrompts, currentPrompt, currentWeekPosts, mockComments } from '../utils/mockdata';
-import { Box, Container } from '@mui/joy';
 import PostCard from '@/components/post-card/PostCard';
+import { Box, Container } from '@mui/joy';
+import { supabase } from "@/utils/supabaseClient"; 
+import {Post, User, Comment} from "../components/types";
 
 
 export default function HomePage() {
-    const [language, setLanguage] = React.useState<'en' | 'zh'>('en');
+  const [language, setLanguage] = useState<'en' | 'zh'>('en');
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [users, setUsers] = useState<Record<string, User>>({});
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    const handleLanguageChange = (lang: 'en' | 'zh') => {
-        setLanguage(lang);
+  const handleLanguageChange = (lang: 'en' | 'zh') => setLanguage(lang);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: postsData } = await supabase.from("posts").select("*");
+      const { data: usersData } = await supabase.from("users").select("*");
+      const { data: commentsData } = await supabase.from("comments").select("*");
+
+      const userMap: Record<string, User> = {};
+      usersData?.forEach(u => userMap[u.id] = u);
+
+      setUsers(userMap);
+      setPosts(postsData || []);
+      setComments(commentsData || []);
+      setLoading(false);
     };
 
-    return (
-        <div>
-            <Box
-                sx={{
-                    bgcolor: '#f1efedff',
-                    minHeight: '100vh',         
+    fetchData();
+  }, []);
 
-                }}>
+  if (loading) return <div>Loading…</div>;
 
-                {/* header */}
-                <Header language={language} onLanguageChange={handleLanguageChange} />
-            
-                <Container maxWidth="lg">
+  return (
+    <div>
+      <Box sx={{ bgcolor: '#f1efedff', minHeight: '100vh' }}>
+        
+        <Header language={language} onLanguageChange={handleLanguageChange} />
 
-                    {/* prompt */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, px: { xs: 2, sm: 3, lg: 4 }, py: { xs: 2, sm: 3, lg: 4 } }}>
-                        <PromptCard prompt={mockPrompts[1]} />
-                    </Box>
-                   
-                   {/* post */}
-                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, px: { xs: 2, sm: 3, lg: 4 }, py: { xs: 2, sm: 3, lg: 4 } }}>
-                        <PostCard
-                            post={currentWeekPosts[0]}
-                            user={mockUsers.find(u => u.id === currentWeekPosts[0].userId)!}
-                            comments={mockComments} 
-                        />
-                   </Box>
+        <Container maxWidth="lg">
+          {/* prompt — still mock for now */}
+          <Box sx={{ mt: 4 }}>
+            <PromptCard prompt={{ id: "p1", text: "Mock prompt", tag: "Storytelling" }} />
+          </Box>
 
-                </Container>
-            </Box>
-            
-        </div>
-    );
+          {/* posts */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 4 }}>
+            {posts.map(post => (
+              <PostCard
+                key={post.id}
+                post={post}
+                user={users[post.userId]}
+                comments={comments.filter(c => c.postId === post.id)}
+              />
+            ))}
+          </Box>
+        </Container>
+
+      </Box>
+    </div>
+  );
 }
