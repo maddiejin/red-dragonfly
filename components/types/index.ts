@@ -7,7 +7,8 @@ export interface User {
 
 export interface Prompt {
     id: string;
-    text: string;
+    text_en: string;
+    text_zh:string;
     tag: string;
 }
 

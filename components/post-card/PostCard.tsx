@@ -10,16 +10,18 @@ interface PostCardProps {
     post: Post;
     user: User;
     comments: Comment[];
+    usersById: Record<string, User>;
     isLocked?: boolean;
     showOnlyTitle?: boolean;
 }
 
-export default function PostCard({ post, comments, user, isLocked = false, showOnlyTitle = false }: PostCardProps) {
+export default function PostCard({ post, comments, user,  usersById, isLocked = false, showOnlyTitle = false }: PostCardProps) {
 
     const [showComments, setShowComments] = React.useState(false);
     const [newComment, setNewComment] = React.useState('');
     const [localComments, setLocalComments] = React.useState<Comment[]>(comments);
     
+    console.log("usersById in PostCard:", usersById);
     const handleAddComment = () => {
         if (newComment.trim()){
             const mockComment : Comment = {
@@ -142,6 +144,7 @@ export default function PostCard({ post, comments, user, isLocked = false, showO
                         {showComments && (
                             <Box>
                                 {localComments.map((comment)=> {
+                                    const commentUser = usersById[comment.userId];
                                     return (
                                     <Box
                                         key={comment.id}
@@ -149,11 +152,14 @@ export default function PostCard({ post, comments, user, isLocked = false, showO
                                             display: 'flex', gap: 1.5
                                         }}>
                                         <Avatar 
+                                            src={commentUser?.profilePic}
+                                            alt={commentUser?.name}
+                                            size='sm'
                                         />
                                         <Box> 
                                             <Box>
                                                 <div>
-                                                    {comment.userId}
+                                                    {commentUser?.name ?? "Unknown user"}
                                                 </div>
                                                 <p>
                                                     {comment.content}

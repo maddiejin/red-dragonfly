@@ -6,7 +6,8 @@ import PromptCard from '@/components/prompt-card/PromptCard';
 import PostCard from '@/components/post-card/PostCard';
 import { Box, Container } from '@mui/joy';
 import { supabase } from "@/utils/supabaseClient"; 
-import {Post, User, Comment} from "../components/types";
+import {Post, User, Comment, Prompt} from "../components/types";
+import {createPost} from "@/utils/api/posts";
 
 
 export default function HomePage() {
@@ -14,29 +15,53 @@ export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<Record<string, User>>({});
   const [comments, setComments] = useState<Comment[]>([]);
+  const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [loading, setLoading] = useState(true);
 
   const handleLanguageChange = (lang: 'en' | 'zh') => setLanguage(lang);
 
+  
+
   useEffect(() => {
-    const fetchData = async () => {
-      const { data: postsData } = await supabase.from("posts").select("*");
-      const { data: usersData } = await supabase.from("users").select("*");
-      const { data: commentsData } = await supabase.from("comments").select("*");
+  const fetchData = async () => {
+    setLoading(true);
 
-      const userMap: Record<string, User> = {};
-      usersData?.forEach(u => userMap[u.id] = u);
+    const { data: promptData, error: promptError } =
+      await supabase.from("prompt").select("*");
 
-      setUsers(userMap);
-      setPosts(postsData || []);
-      setComments(commentsData || []);
-      setLoading(false);
-    };
+    if (promptError || !promptData || promptData.length === 0) {
+      console.error("Prompt error:", promptError);
+      return;
+    }
 
-    fetchData();
-  }, []);
+    const selectedPrompt = promptData[1];
+    setPrompt(selectedPrompt);
 
-  if (loading) return <div>Loading…</div>;
+    const [{ data: postData }, { data: userData }, { data: commentData }] =
+      await Promise.all([
+        supabase.from("post").select("*").eq("promptId", selectedPrompt.id),
+        supabase.from("user").select("*"),
+        supabase.from("comment").select("*"),
+      ]);
+
+    setPosts(postData || []);
+    setComments(commentData || []);
+
+    const userMap: Record<string, User> = {};
+    userData?.forEach(u => {
+      userMap[u.id] = u;
+    });
+    setUsers(userMap);
+
+    setLoading(false);
+  };
+
+  fetchData();
+}, []);
+
+
+  if (loading || !prompt) return <div>Loading…</div>;
+
 
   return (
     <div>
@@ -45,10 +70,14 @@ export default function HomePage() {
         <Header language={language} onLanguageChange={handleLanguageChange} />
 
         <Container maxWidth="lg">
-          {/* prompt — still mock for now */}
-          <Box sx={{ mt: 4 }}>
-            <PromptCard prompt={{ id: "p1", text: "Mock prompt", tag: "Storytelling" }} />
-          </Box>
+          {/* prompt */}
+          { prompt && (
+            <Box sx={{ mt: 4 }}>
+              <PromptCard prompt={prompt} language={language} />
+            </Box>
+          )}
+
+          
 
           {/* posts */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 4 }}>
@@ -58,6 +87,7 @@ export default function HomePage() {
                 post={post}
                 user={users[post.userId]}
                 comments={comments.filter(c => c.postId === post.id)}
+                usersById={users}
               />
             ))}
           </Box>

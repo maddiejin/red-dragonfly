@@ -3,6 +3,7 @@ import { Card, Chip, Box } from "@mui/joy";
 
 interface PromptCardProps {
     prompt: Prompt;
+    language: 'en' | 'zh';
 }
 
 const tagColors: Record<string, string> = {
@@ -24,7 +25,7 @@ const TagChip = ({ tag }: { tag: string }) => (
     </Chip>
 );
 
-export default function PromptCard({ prompt }: PromptCardProps) {
+export default function PromptCard({ prompt, language }: PromptCardProps) {
     return (
         <Card
             variant="outlined"
@@ -56,8 +57,7 @@ export default function PromptCard({ prompt }: PromptCardProps) {
                         margin: 0,
                     }}
                 >
-                    {prompt.text}
-
+                    {language === 'en' ? prompt.text_en : prompt.text_zh}
                 </h2>
 
             </Card>
