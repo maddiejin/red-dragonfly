@@ -1,16 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import { supabase } from "@/utils/supabaseClient"; 
+
+import { useAuth } from "@/utils/hooks/useAuth";
+
+import { useEffect, useState } from 'react';
+import { Box, Container } from '@mui/joy';
+import {useRouter} from 'next/navigation';
+
 import Header from '../components/header/Header';
 import PromptCard from '@/components/prompt-card/PromptCard';
 import PostCard from '@/components/post-card/PostCard';
-import { Box, Container } from '@mui/joy';
-import { supabase } from "@/utils/supabaseClient"; 
-import {Post, User, Comment, Prompt} from "../components/types";
-import {createPost} from "@/utils/api/posts";
+import CreatePostForm from '@/components/create/CreatePostForm';
+
+import {Post, User, Comment, Prompt} from "@/components/types";
 
 
 export default function HomePage() {
+  const router = useRouter();
+  const {user: currentUser, loading: authLoading } = useAuth();
+  
   const [language, setLanguage] = useState<'en' | 'zh'>('en');
   const [posts, setPosts] = useState<Post[]>([]);
   const [users, setUsers] = useState<Record<string, User>>({});
@@ -19,11 +28,19 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   const handleLanguageChange = (lang: 'en' | 'zh') => setLanguage(lang);
-
   
 
+  //auth
+  useEffect( () => {
+    if (!authLoading && !currentUser){
+      router.replace("/login");
+    }
+  }, [authLoading,currentUser, router]);
+
   useEffect(() => {
-  const fetchData = async () => {
+    if (!currentUser) return; 
+
+    const fetchData = async () => {
     setLoading(true);
 
     const { data: promptData, error: promptError } =
@@ -57,26 +74,37 @@ export default function HomePage() {
   };
 
   fetchData();
-}, []);
+}, [currentUser]);
 
 
-  if (loading || !prompt) return <div>Loading…</div>;
 
+if (loading || authLoading || !prompt) return <div>Loading…</div>;
 
   return (
     <div>
       <Box sx={{ bgcolor: '#f1efedff', minHeight: '100vh' }}>
-        
-        <Header language={language} onLanguageChange={handleLanguageChange} />
 
+        <Header/>
+      
         <Container maxWidth="lg">
           {/* prompt */}
           { prompt && (
             <Box sx={{ mt: 4 }}>
-              <PromptCard prompt={prompt} language={language} />
+              <PromptCard prompt={prompt} language={language} onLanguageChange={handleLanguageChange}/>
             </Box>
           )}
 
+          {currentUser &&(
+            <CreatePostForm
+            promptId={prompt.id}
+            userId={currentUser.id}
+            onPostCreated={(newPost) => setPosts(
+              prev => [newPost, ...prev]
+            )}
+          />
+          )}
+
+          {!currentUser && <div>Please log in to post!</div>}
           
 
           {/* posts */}

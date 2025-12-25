@@ -2,25 +2,34 @@ import { supabase } from "@/utils/supabaseClient";
 import { Post } from "@/components/types";
 
 interface CreatePostInput {
-  userId: string;
-  promptId: string;
-  title: string;
-  content: string;
-  images?: string[];
-  location?: string;
+  authUserId: string;     // the ID of the user creating the post
+  promptId: number;   // the ID of the prompt the post is for
+  title: string;      // post title
+  content: string;    // post content
+
 }
 
 export async function createPost(input: CreatePostInput) {
+  // First, find the internal user ID
+  const { data: usersData, error: usersError } = await supabase
+    .from("user")
+    .select("id")
+    .eq("auth_id", input.authUserId)
+    .single();
+
+  if (usersError || !usersData) throw new Error("Internal user not found");
+
+  const internalUserId = usersData.id; // this is BIGINT
+
   const { data, error } = await supabase
     .from("post")
     .insert([
       {
-        user_id: input.userId,
+        user_id: internalUserId,
         prompt_id: input.promptId,
         title: input.title,
         content: input.content,
-        images: input.images ?? [],
-        location: input.location ?? null,
+
       },
     ])
     .select()

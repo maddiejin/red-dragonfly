@@ -1,9 +1,11 @@
 import { Prompt } from "@/components/types";
 import { Card, Chip, Box } from "@mui/joy";
+import LanguageToggle from "../prompt-card/LanguageToggle"
 
 interface PromptCardProps {
     prompt: Prompt;
     language: 'en' | 'zh';
+    onLanguageChange: (lang: 'en' | 'zh') => void;
 }
 
 const tagColors: Record<string, string> = {
@@ -25,7 +27,7 @@ const TagChip = ({ tag }: { tag: string }) => (
     </Chip>
 );
 
-export default function PromptCard({ prompt, language }: PromptCardProps) {
+export default function PromptCard({ prompt, language, onLanguageChange }: PromptCardProps) {
     return (
         <Card
             variant="outlined"
@@ -46,7 +48,11 @@ export default function PromptCard({ prompt, language }: PromptCardProps) {
                         mb: 2 
                     }}
                 >
-                <TagChip tag={prompt.tag} />   
+                <TagChip tag={prompt.tag} />  
+                <LanguageToggle 
+                    language= {language}
+                    onLanguageChange={onLanguageChange} 
+                />
                 </Box>
                     
                 <h2
